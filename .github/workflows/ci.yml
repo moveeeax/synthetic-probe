@@ -1,0 +1,43 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: synthetic-probe
+    steps:
+      - uses: actions/checkout@v4
+
+      # The self-hosted ARC runner is minimal; install the Go toolchain via apt
+      # rather than a download-based action (no xz for .tar.xz archives).
+      - name: Install Go
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y golang-go
+          go version
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Test
+        run: go test -race ./...
+
+      - name: Build
+        run: go build -ldflags "-X main.version=${GITHUB_REF_NAME}" -o synthetic-probe .
+
+      - name: Smoke test the binary
+        run: |
+          ./synthetic-probe --version
+          ./synthetic-probe --config examples/targets.yaml --listen 127.0.0.1:9115 &
+          PID=$!
+          sleep 3
+          curl -sf http://127.0.0.1:9115/metrics | grep -q "synthetic_probe_up"
+          curl -sf http://127.0.0.1:9115/healthz | grep -q "ok"
+          kill $PID

@@ -1,0 +1,25 @@
+# synthetic-probe target configuration.
+# The file is re-read automatically when it changes (see --reload-interval),
+# so you can add or remove targets without restarting the process.
+
+default_interval: 15s
+default_timeout: 5s
+
+targets:
+  # HTTP(S): checks that the endpoint answers with expect_status (default 200).
+  - name: example-http
+    type: http
+    url: https://example.com
+    expect_status: 200
+    interval: 30s
+
+  # DNS: checks that the host resolves and counts the returned addresses.
+  - name: example-dns
+    type: dns
+    host: example.com
+
+  # TLS: connects and reports days until the leaf certificate expires.
+  - name: example-tls
+    type: tls
+    address: example.com:443
+    interval: 1h

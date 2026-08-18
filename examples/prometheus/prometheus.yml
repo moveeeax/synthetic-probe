@@ -1,0 +1,11 @@
+# Minimal Prometheus config that scrapes a local synthetic-probe.
+global:
+  scrape_interval: 15s
+
+rule_files:
+  - alerts.yml
+
+scrape_configs:
+  - job_name: synthetic-probe
+    static_configs:
+      - targets: ["localhost:9115"]

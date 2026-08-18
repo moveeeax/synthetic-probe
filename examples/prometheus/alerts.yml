@@ -1,0 +1,29 @@
+groups:
+  - name: synthetic-probe
+    rules:
+      - alert: SyntheticProbeDown
+        expr: synthetic_probe_up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Probe {{ $labels.target }} ({{ $labels.type }}) is failing"
+          description: "synthetic_probe_up for {{ $labels.target }} has been 0 for 2 minutes."
+
+      - alert: SyntheticProbeSlow
+        expr: synthetic_probe_duration_seconds > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Probe {{ $labels.target }} is slow"
+          description: "The last probe of {{ $labels.target }} took {{ $value }}s (>2s) for 5 minutes."
+
+      - alert: TLSCertExpiringSoon
+        expr: synthetic_probe_ssl_cert_expiry_days < 14
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "TLS certificate for {{ $labels.target }} expires soon"
+          description: "The certificate for {{ $labels.target }} expires in {{ $value }} days. Renew it."

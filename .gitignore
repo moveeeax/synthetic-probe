@@ -1,0 +1,10 @@
+# Built binary — anchored to the repo root so it never matches a source dir.
+/synthetic-probe
+
+# Local Go build/test artifacts.
+*.out
+*.test
+/dist/
+
+# Keep test fixtures tracked even if a glob above would catch them.
+!testdata/**
