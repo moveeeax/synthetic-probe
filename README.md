@@ -122,3 +122,7 @@ go vet ./...
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+---
+
+**Archived on 2026-11-05.** blackbox_exporter already does HTTP, DNS and TLS probes with cert expiry, regex assertions and much more. A self-scheduled target list with hot reload is a thin angle. Keep only if DNS divergence across resolvers (#3) becomes its identity.
