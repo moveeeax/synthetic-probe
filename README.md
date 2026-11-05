@@ -1,7 +1,7 @@
 # synthetic-probe
 
 [![ci](https://github.com/moveeeax/synthetic-probe/actions/workflows/ci.yml/badge.svg)](https://github.com/moveeeax/synthetic-probe/actions/workflows/ci.yml)
-[![Go](https://img.shields.io/badge/go-1.22-00ADD8?logo=go&logoColor=white)](https://go.dev)
+[![Go](https://img.shields.io/badge/go-1.26%20%7C%201.27-00ADD8?logo=go&logoColor=white)](https://go.dev)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 > Blackbox-style HTTP / DNS / TLS checks without the operational weight — one static binary that speaks Prometheus.
@@ -19,7 +19,8 @@ config hot-reloads, so you add or drop targets without a restart.
 - **TLS** — connects and reports the days remaining on the leaf certificate,
   even if it is self-signed or already expired.
 - Exposes everything as Prometheus gauges under the `synthetic_probe_` namespace.
-- Ships as a single static binary and a `distroless` container image.
+- Builds into a single static binary; a `Dockerfile` for a `distroless` image
+  is included (no prebuilt image is published).
 
 ## How it works
 
@@ -101,6 +102,10 @@ Example Prometheus scrape config and alert rules (down / slow / cert expiring)
 live in [`examples/prometheus`](examples/prometheus).
 
 ## Container
+
+There is no published container image. Build it yourself from the
+`Dockerfile` (Go 1.27 builder, `distroless/static:nonroot` runtime pinned by
+digest):
 
 ```bash
 docker build -t synthetic-probe .

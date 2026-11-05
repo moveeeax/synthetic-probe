@@ -12,12 +12,16 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ["1.26", "1.27"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v7
         with:
-          go-version-file: go.mod
+          go-version: ${{ matrix.go }}
           cache: true
 
       - name: Vet
@@ -38,3 +42,14 @@ jobs:
           curl -sf http://127.0.0.1:9115/metrics | grep -q "synthetic_probe_up"
           curl -sf http://127.0.0.1:9115/healthz | grep -q "ok"
           kill $PID
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build image (no push)
+        run: docker build -t synthetic-probe:ci .
+
+      - name: Smoke test the image
+        run: docker run --rm synthetic-probe:ci --version
